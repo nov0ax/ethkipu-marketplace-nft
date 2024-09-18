@@ -50,4 +50,5 @@ This is a real contract that handles real NFTs and Ether. Use it carefully, and 
 ##Team members
 
 https://github.com/AnoukRImola/ethkipu-marketplace-nft
+
 https://github.com/PabloVillaplana/ethkipu-marketplace-nft
