@@ -47,7 +47,7 @@ This contract uses Solidity version 0.8.26 and depends on OpenZeppelin contracts
 
 This is a real contract that handles real NFTs and Ether. Use it carefully, and if you have doubts, ask someone with experience in smart contracts for help.
 
-##Team members
+## Team members
 
 https://github.com/AnoukRImola/ethkipu-marketplace-nft
 
