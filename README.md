@@ -1,54 +1,95 @@
-# vitalikPlace: Your NFT Marketplace
+# VitalikPlace: SmartContract de Marketplace de NFTs
 
-## What is vitalikPlace?
+## Descripción
 
-vitalikPlace is a smart contract that creates a marketplace for buying and selling NFTs (Non-Fungible Tokens) on the Ethereum blockchain. Think of it as an online marketplace, but for unique digital items.
+VitalikPlace es un contrato inteligente de Marketplace de NFTs descentralizado construido en Ethereum. Permite a los usuarios listar, comprar, deslistar y actualizar los precios de sus NFTs. El contrato proporciona una forma segura y transparente de comercializar tokens ERC721.
 
-## What can you do with vitalikPlace?
+### Características Principales:
+- Listar NFTs para la venta
+- Comprar NFTs listados
+- Deslistar NFTs
+- Actualizar precios de NFTs listados
+- Ver precios de NFTs listados
 
-1. Sell your NFTs: If you have an NFT, you can put it up for sale.
-2. Buy NFTs: You can purchase NFTs that others have put up for sale.
-3. Change the price: If you're the seller, you can change the price of your NFT.
-4. Cancel the sale: If you change your mind, you can remove your NFT from the sale.
+## Fundamentos del Diseño y Patrones de Diseño en Solidity
 
-## How it works
+### 1. Reentrancy Guard
 
-### To sell an NFT:
-1. Use the listNFT function
-2. Tell the contract which NFT you want to sell and at what price
+Hemos implementado el ReentrancyGuard de OpenZeppelin para proteger contra ataques de reentrada. Esto es crucial para funciones que involucran transferencias de Ether o tokens.
 
-### To buy an NFT:
-1. Use the buyNFT function
-2. Send enough Ether to cover the price
+Solidity (Ethereum)
+
+
+solidity
+contract VitalikPlace is ReentrancyGuard {
+    // ...
+}
 
-### To change the price:
-1. Use the updatePrice function
-2. Specify the new price you want
+Patrón Utilizado: Reentrancy Guard
+Razón: Previene que contratos maliciosos vuelvan a entrar en el contrato durante cambios de estado, mejorando la seguridad.
 
-### To cancel the sale:
-1. Use the unlistNFT function
+### 2. Patrón Checks-Effects-Interactions
 
-## Important tips
+En funciones como buyNFT, seguimos el patrón Checks-Effects-Interactions:
 
-- Make sure you have permission to sell the NFT before listing it.
-- When buying, send the exact amount of Ether that the NFT costs.
-- Only the owner of an NFT can list it or change its price.
-- Once you sell an NFT, the sale is final and cannot be undone.
+1. Comprobar condiciones
+2. Actualizar estado
+3. Interactuar con contratos externos
 
-## Security
+Solidity (Ethereum)
+
+
+solidity
+function buyNFT(address nftAddress, uint256 tokenId) external payable nonReentrant {
+    // Comprobaciones
+    Listing memory listing = listings[nftAddress][tokenId];
+    require(listing.price > 0, "El NFT no está listado para la venta");
+    require(msg.value >= listing.price, "Ether insuficiente para cubrir el precio de venta");
 
-The contract has security measures to protect your NFTs and your money, but always be careful when using smart contracts.
+    // Efectos
+    delete listings[nftAddress][tokenId];
 
-## For developers
+    // Interacciones
+    IERC721(nftAddress).safeTransferFrom(address(this), msg.sender, tokenId);
+    payable(listing.seller).transfer(listing.price);
 
-This contract uses Solidity version 0.8.26 and depends on OpenZeppelin contracts. Make sure you have everything set up before deploying it.
+    emit NFTSold(nftAddress, tokenId, msg.sender, listing.price);
+}
 
-## Remember
+Patrón Utilizado: Checks-Effects-Interactions
+Razón: Minimiza el riesgo de ataques de reentrada y asegura un flujo claro y lógico de operaciones.
 
-This is a real contract that handles real NFTs and Ether. Use it carefully, and if you have doubts, ask someone with experience in smart contracts for help.
+### 3. Emisión de Eventos
 
-## Team members
+Emitimos eventos para todos los cambios de estado significativos:
 
-https://github.com/AnoukRImola/ethkipu-marketplace-nft
+Solidity (Ethereum)
+
+
+solidity
+event NFTListed(address indexed nftAddress, uint256 indexed tokenId, address indexed seller, uint256 price);
+event NFTSold(address indexed nftAddress, uint256 indexed tokenId, address indexed buyer, uint256 price);
+event NFTUnlisted(address indexed nftAddress, uint256 indexed tokenId, address indexed seller);
+event NFTPriceUpdated(address indexed nftAddress, uint256 indexed tokenId, uint256 newPrice);
 
-https://github.com/PabloVillaplana/ethkipu-marketplace-nft
+Patrón Utilizado: Event Emission
+Razón: Permite un seguimiento eficiente fuera de la cadena de los cambios de estado del contrato y proporciona una pista de auditoría clara.
+
+### 4. Access Control
+
+Usamos comprobaciones simples de control de acceso para asegurar que solo usuarios autorizados puedan realizar ciertas acciones:
+
+Solidity (Ethereum)
+
+
+solidity
+require(listing.seller == msg.sender, "Debes ser el vendedor para actualizar el precio");
+
+Patrón Utilizado: Access Control
+Razón: Asegura que solo el propietario legítimo de un NFT pueda modificar su listado o precio.
+
+
+### Integrantes: 
+- [Juan Pablo Villaplana](https://github.com/PabloVillaplana)
+- [Diana Novoa](https://github.com/nov0ax)
+- [Anouk Rímola](https://github.com/AnoukRImola)
