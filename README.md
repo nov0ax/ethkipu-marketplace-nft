@@ -2,7 +2,7 @@
 
 ## Descripción
 
-VitalikPlace es un contrato inteligente de Marketplace de NFTs descentralizado construido en Ethereum. Permite a los usuarios listar, comprar, deslistar y actualizar los precios de sus NFTs. El contrato proporciona una forma segura y transparente de comercializar tokens ERC721.
+VitalikPlace es un contrato inteligente de Marketplace de NFTs descentralizado construido en Ethereum. Permite a los usuarios listar, comprar, deslistar y actualizar los precios de sus NFTs. El contrato proporciona una forma segura y transparente de comerciar tokens ERC721.
 
 ### Características Principales:
 - Listar NFTs para la venta
@@ -15,31 +15,26 @@ VitalikPlace es un contrato inteligente de Marketplace de NFTs descentralizado c
 
 ### 1. Reentrancy Guard
 
-Hemos implementado el ReentrancyGuard de OpenZeppelin para proteger contra ataques de reentrada. Esto es crucial para funciones que involucran transferencias de Ether o tokens.
+Hemos implementado el `ReentrancyGuard` de OpenZeppelin para proteger contra ataques de reentrada. Esto es crucial para funciones que involucran transferencias de Ether o tokens.
 
-Solidity (Ethereum)
-
-
-solidity
+```solidity
 contract VitalikPlace is ReentrancyGuard {
     // ...
 }
+```
 
-Patrón Utilizado: Reentrancy Guard
-Razón: Previene que contratos maliciosos vuelvan a entrar en el contrato durante cambios de estado, mejorando la seguridad.
+**Patrón Utilizado**: Reentrancy Guard
+**Razón**: Previene que contratos maliciosos vuelvan a entrar en el contrato durante cambios de estado, mejorando la seguridad.
 
 ### 2. Patrón Checks-Effects-Interactions
 
-En funciones como buyNFT, seguimos el patrón Checks-Effects-Interactions:
+En funciones como `buyNFT`, seguimos el patrón Checks-Effects-Interactions:
 
 1. Comprobar condiciones
 2. Actualizar estado
 3. Interactuar con contratos externos
 
-Solidity (Ethereum)
-
-
-solidity
+```solidity
 function buyNFT(address nftAddress, uint256 tokenId) external payable nonReentrant {
     // Comprobaciones
     Listing memory listing = listings[nftAddress][tokenId];
@@ -55,38 +50,35 @@ function buyNFT(address nftAddress, uint256 tokenId) external payable nonReentra
 
     emit NFTSold(nftAddress, tokenId, msg.sender, listing.price);
 }
+```
 
-Patrón Utilizado: Checks-Effects-Interactions
-Razón: Minimiza el riesgo de ataques de reentrada y asegura un flujo claro y lógico de operaciones.
+**Patrón Utilizado**: Checks-Effects-Interactions
+**Razón**: Minimiza el riesgo de ataques de reentrada y asegura un flujo claro y lógico de operaciones.
 
 ### 3. Emisión de Eventos
 
 Emitimos eventos para todos los cambios de estado significativos:
 
-Solidity (Ethereum)
-
-
-solidity
+```solidity
 event NFTListed(address indexed nftAddress, uint256 indexed tokenId, address indexed seller, uint256 price);
 event NFTSold(address indexed nftAddress, uint256 indexed tokenId, address indexed buyer, uint256 price);
 event NFTUnlisted(address indexed nftAddress, uint256 indexed tokenId, address indexed seller);
 event NFTPriceUpdated(address indexed nftAddress, uint256 indexed tokenId, uint256 newPrice);
+```
 
-Patrón Utilizado: Event Emission
-Razón: Permite un seguimiento eficiente fuera de la cadena de los cambios de estado del contrato y proporciona una pista de auditoría clara.
+**Patrón Utilizado**: Event Emission
+**Razón**: Permite un seguimiento eficiente fuera de la cadena de los cambios de estado del contrato y proporciona una pista de auditoría clara.
 
 ### 4. Access Control
 
 Usamos comprobaciones simples de control de acceso para asegurar que solo usuarios autorizados puedan realizar ciertas acciones:
 
-Solidity (Ethereum)
-
-
-solidity
+```solidity
 require(listing.seller == msg.sender, "Debes ser el vendedor para actualizar el precio");
+```
 
-Patrón Utilizado: Access Control
-Razón: Asegura que solo el propietario legítimo de un NFT pueda modificar su listado o precio.
+**Patrón Utilizado**: Access Control
+**Razón**: Asegura que solo el propietario legítimo de un NFT pueda modificar su listado o precio.
 
 
 ### Integrantes: 
