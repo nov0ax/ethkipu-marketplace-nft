@@ -11,6 +11,12 @@ VitalikPlace es un contrato inteligente de Marketplace de NFTs descentralizado c
 - Actualizar precios de NFTs listados
 - Ver precios de NFTs listados
 
+### Tecnologías utilizadas:
+- `Smart Contracts:` Solidity
+- `Entorno de Desarrollo:` Foundry
+- `Front-end:` React + Wagmi
+- `Tests:` Pruebas unitarias con Foundry
+
 ## Fundamentos del Diseño y Patrones de Diseño en Solidity
 
 ### 1. Reentrancy Guard
