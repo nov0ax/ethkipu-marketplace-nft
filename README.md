@@ -86,6 +86,13 @@ require(listing.seller == msg.sender, "Debes ser el vendedor para actualizar el 
 **Patrón Utilizado**: Access Control
 **Razón**: Asegura que solo el propietario legítimo de un NFT pueda modificar su listado o precio.
 
+### Pruebas Unitarias
+
+Hemos implementado pruebas unitarias exhaustivas utilizando el framework de testing de Foundry para asegurar la robustez y correcto funcionamiento de nuestro smart contract. Estas pruebas cubren todos los casos de uso principales y escenarios de borde para garantizar la integridad del marketplace.
+
+### Interfaz Front-end
+
+La interfaz de usuario de VitalikPlace está construida con React y utiliza la biblioteca wagmi para una integración fluida con wallets y contratos de Ethereum. Esto proporciona una experiencia de usuario reactiva y fácil de usar para interactuar con el marketplace.
 
 ### Integrantes: 
 - [Juan Pablo Villaplana](https://github.com/PabloVillaplana)
